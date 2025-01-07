@@ -1,37 +1,169 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Máy Tính Đơn Giản</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Simple Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f3f4f6;
+        }
+
+        .calculator {
+            width: 100%;
+            max-width: 400px;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .display {
+            width: 100%;
+            height: 60px;
+            margin-bottom: 20px;
+            padding: 10px;
+            font-size: 24px;
+            text-align: right;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            box-sizing: border-box;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .button {
+            height: 60px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background: #007bff;
+            color: #fff;
+            transition: background 0.3s;
+        }
+
+        .button:hover {
+            background: #0056b3;
+        }
+
+        .button.operator {
+            background: #28a745;
+        }
+
+        .button.operator:hover {
+            background: #1e7e34;
+        }
+
+        .button.clear {
+            background: #dc3545;
+        }
+
+        .button.clear:hover {
+            background: #c82333;
+        }
+
+        .history {
+            margin-top: 20px;
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+        }
+
+        .history-item {
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+
+        @media (max-width: 480px) {
+            .button {
+                font-size: 16px;
+            }
+
+            .display {
+                font-size: 20px;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="calculator">
-        <div class="display" id="display">0</div>
+        <input type="text" class="display" id="display" readonly />
         <div class="buttons">
-            <button class="btn btn-clear" id="clear">C</button>
-            <button class="btn btn-operator" data-operator="/">÷</button>
-            <button class="btn btn-operator" data-operator="*">×</button>
-            <button class="btn btn-operator" data-operator="-">−</button>
-
-            <button class="btn" data-number="7">7</button>
-            <button class="btn" data-number="8">8</button>
-            <button class="btn" data-number="9">9</button>
-            <button class="btn btn-operator" data-operator="+">+</button>
-
-            <button class="btn" data-number="4">4</button>
-            <button class="btn" data-number="5">5</button>
-            <button class="btn" data-number="6">6</button>
-            <button class="btn btn-equal" id="equals" rowspan="2">=</button>
-
-            <button class="btn" data-number="1">1</button>
-            <button class="btn" data-number="2">2</button>
-            <button class="btn" data-number="3">3</button>
-            <button class="btn" data-number="0" colspan="2">0</button>
+            <button class="button" onclick="appendNumber('7')">7</button>
+            <button class="button" onclick="appendNumber('8')">8</button>
+            <button class="button" onclick="appendNumber('9')">9</button>
+            <button class="button operator" onclick="appendOperator('/')">/</button>
+            <button class="button" onclick="appendNumber('4')">4</button>
+            <button class="button" onclick="appendNumber('5')">5</button>
+            <button class="button" onclick="appendNumber('6')">6</button>
+            <button class="button operator" onclick="appendOperator('*')">*</button>
+            <button class="button" onclick="appendNumber('1')">1</button>
+            <button class="button" onclick="appendNumber('2')">2</button>
+            <button class="button" onclick="appendNumber('3')">3</button>
+            <button class="button operator" onclick="appendOperator('-')">-</button>
+            <button class="button" onclick="appendNumber('0')">0</button>
+            <button class="button clear" onclick="clearDisplay()">C</button>
+            <button class="button" onclick="calculate()">=</button>
+            <button class="button operator" onclick="appendOperator('+')">+</button>
         </div>
+        <div class="history" id="history"></div>
+        <button class="button clear" style="margin-top: 10px; width: 100%;" onclick="clearHistory()">Clear History</button>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        const display = document.getElementById('display');
+        const history = document.getElementById('history');
+
+        function appendNumber(number) {
+            display.value += number;
+        }
+
+        function appendOperator(operator) {
+            if (display.value === '' || isNaN(display.value.slice(-1))) {
+                return;
+            }
+            display.value += operator;
+        }
+
+        function clearDisplay() {
+            display.value = '';
+        }
+
+        function calculate() {
+            try {
+                const result = eval(display.value);
+                addToHistory(display.value + ' = ' + result);
+                display.value = result;
+            } catch {
+                display.value = 'Error';
+            }
+        }
+
+        function addToHistory(entry) {
+            const historyItem = document.createElement('div');
+            historyItem.className = 'history-item';
+            historyItem.textContent = entry;
+            history.prepend(historyItem);
+        }
+
+        function clearHistory() {
+            history.innerHTML = '';
+        }
+    </script>
 </body>
 </html>
